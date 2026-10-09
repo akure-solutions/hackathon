@@ -6,6 +6,7 @@ const { encrypt } = require('../crypto');
 const { nowIso } = require('../time');
 const { audit } = require('../audit');
 const { issueToken, checkinUrl } = require('../tokens');
+const { demoMode } = require('../config');
 
 const router = express.Router();
 
@@ -19,7 +20,11 @@ const signupLimiter = rateLimit({
 
 const EQUIPMENT = ['breathing', 'dialysis', 'feeding', 'refrigeration', 'mobility'];
 const BACKUP = ['generator', 'solar_battery', 'none'];
-const CHANNELS = ['sms', 'whatsapp', 'call'];
+const CHANNELS = ['sms', 'whatsapp'];
+const RELATIONSHIPS = [
+  'child', 'spouse', 'parent', 'sibling', 'grandchild',
+  'other_family', 'neighbor', 'friend', 'professional_caregiver',
+];
 const NAME_RE = /^[\p{L}][\p{L}\s'.-]{0,59}$/u;
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/;
 
@@ -136,7 +141,7 @@ function validateSignup(body) {
       lastNames: name(cg.lastNames, 'caregiver.lastNames'),
       phone: phone(cg.phone, 'caregiver.phone'),
       email: caregiverEmail,
-      relationship: name(cg.relationship, 'caregiver.relationship'),
+      relationship: oneOf(cg.relationship, RELATIONSHIPS, 'caregiver.relationship'),
     },
     consents: {
       service: true,
@@ -233,7 +238,10 @@ router.post('/', signupLimiter, (req, res) => {
     }
     throw err;
   }
-  res.status(201).json(createResident(data));
+  const result = createResident(data);
+  // In production the personal link is delivered by message, never shown on screen.
+  if (!demoMode) delete result.checkinUrl;
+  res.status(201).json(result);
 });
 
 module.exports = router;

@@ -9,6 +9,10 @@ const { nowIso } = require('./src/time');
 const residentsRouter = require('./src/routes/residents');
 const municipiosRouter = require('./src/routes/municipios');
 
+const outagesRouter = require('./src/routes/outages');
+const demoRouter = require('./src/routes/demo');
+const engine = require('./src/engine');
+
 const allowedOrigins = new Set([
   `http://localhost:${config.port}`,
   new URL(config.publicBaseUrl).origin,
@@ -39,6 +43,8 @@ app.use('/api', (req, res, next) => {
 
 app.use('/api/municipios', municipiosRouter);
 app.use('/api/residents', residentsRouter);
+app.use('/api/outages', outagesRouter);
+app.use('/api/demo', demoRouter);
 
 // Unknown API routes return JSON, not HTML.
 app.use('/api', (req, res) => {
@@ -53,4 +59,5 @@ app.use((err, req, res, next) => {
 
 app.listen(config.port, () => {
   console.log(`Energía Vital running on http://localhost:${config.port}`);
+  engine.start();
 });

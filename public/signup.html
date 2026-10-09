@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro · Energía Vital</title>
+  <link rel="icon" href="/img/logo-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/fonts.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/signup.css">
+</head>
+<body>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <div class="wrap">
+      <header class="brand">
+        <span class="brand__tile"><img src="/img/logo-icon.svg" alt=""></span>
+        <span class="brand__name">Energía Vital</span>
+      </header>
+      <h1 class="hero__title">Tu seguridad no debe depender <span>de la luz.</span></h1>
+      <p class="hero__lede">
+        Si tú o un ser querido depende de equipo médico eléctrico, Energía Vital te ayuda a mantenerte
+        informado durante apagones y a comunicarte con las personas que pueden brindarte apoyo.
+      </p>
+    </div>
+  </section>
+
+  <main class="wrap">
+
+    <!-- ===== Gate question ===== -->
+    <section class="card card--gate" id="gate">
+      <h2 class="card__title" id="q-equipo">¿En tu hogar alguien depende de equipo médico que necesita electricidad?</h2>
+      <p class="card__hint">Por ejemplo: concentrador de oxígeno, máquina de diálisis, bomba de alimentación o equipo de refrigeración para medicamentos.</p>
+      <div class="gate__actions" role="group" aria-labelledby="q-equipo">
+        <button type="button" class="btn btn--primary btn--lead" data-gate="yes" aria-pressed="false">
+          Sí, yo o alguien en mi hogar <span aria-hidden="true">→</span>
+        </button>
+        <button type="button" class="btn btn--secondary btn--lead" data-gate="no" aria-pressed="false">No</button>
+      </div>
+      <div class="notice" id="gate-no" hidden>
+        Gracias por tu interés. Este registro es para hogares donde alguien depende de equipo médico eléctrico.
+        Si eso cambia, aquí estaremos.
+      </div>
+    </section>
+
+    <p class="privacy">
+      <svg width="18" height="20" viewBox="0 0 18 20" fill="none" aria-hidden="true"><rect x="1.5" y="8.5" width="15" height="10" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M5 8.5V6a4 4 0 0 1 8 0v2.5" stroke="currentColor" stroke-width="2"/></svg>
+      <span><strong>Tu información, bajo tu control.</strong> Tú decides a quién autorizas a recibir alertas y qué información deseas compartir.</span>
+    </p>
+
+    <!-- ===== Full form (revealed after "Sí") ===== -->
+    <form id="signup-form" novalidate hidden>
+
+      <!-- 1. Equipo -->
+      <section class="card">
+        <h2 class="card__head"><span class="card__num">1</span> El equipo</h2>
+
+        <div class="field">
+          <span class="field__label" id="lbl-equipment">¿Qué tipo de equipo se usa?</span>
+          <div class="choices choices--grid" role="radiogroup" aria-labelledby="lbl-equipment">
+            <label class="choice"><input type="radio" name="equipmentCategory" value="breathing"><span>Respiración</span></label>
+            <label class="choice"><input type="radio" name="equipmentCategory" value="dialysis"><span>Diálisis</span></label>
+            <label class="choice"><input type="radio" name="equipmentCategory" value="feeding"><span>Alimentación / infusión</span></label>
+            <label class="choice"><input type="radio" name="equipmentCategory" value="refrigeration"><span>Refrigeración de medicamentos</span></label>
+            <label class="choice"><input type="radio" name="equipmentCategory" value="mobility"><span>Movilidad</span></label>
+          </div>
+          <p class="field__error" data-error-for="equipmentCategory"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="survivalWindowHours">¿Cuántas horas dura el equipo sin luz?</label>
+          <span class="field__hint" id="hint-hours">Con la batería cargada. Si no estás seguro, pon un estimado.</span>
+          <input class="field__input field__input--short" type="number" id="survivalWindowHours" name="survivalWindowHours"
+                 min="0.5" max="168" step="0.5" inputmode="decimal" aria-describedby="hint-hours">
+          <p class="field__error" data-error-for="survivalWindowHours"></p>
+        </div>
+
+        <div class="field">
+          <span class="field__label" id="lbl-backup">¿Hay energía de respaldo en el hogar?</span>
+          <div class="choices" role="radiogroup" aria-labelledby="lbl-backup">
+            <label class="choice"><input type="radio" name="backupPower" value="generator"><span>Generador</span></label>
+            <label class="choice"><input type="radio" name="backupPower" value="solar_battery"><span>Placas solares con batería</span></label>
+            <label class="choice"><input type="radio" name="backupPower" value="none"><span>Ninguna</span></label>
+          </div>
+          <span class="field__hint">Las placas solares sin batería normalmente se apagan cuando se va la luz.</span>
+          <p class="field__error" data-error-for="backupPower"></p>
+        </div>
+      </section>
+
+      <!-- 2. Persona -->
+      <section class="card">
+        <h2 class="card__head"><span class="card__num">2</span> Datos de la persona que usa el equipo</h2>
+        <p class="card__hint">Si registras a un familiar, escribe sus datos, no los tuyos.</p>
+
+        <div class="field">
+          <label class="field__label" for="firstName">Nombre</label>
+          <input class="field__input" type="text" id="firstName" name="firstName" autocomplete="given-name" maxlength="60">
+          <p class="field__error" data-error-for="firstName"></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="lastNamePaternal">Apellido paterno</label>
+            <input class="field__input" type="text" id="lastNamePaternal" name="lastNamePaternal" autocomplete="family-name" maxlength="60">
+            <p class="field__error" data-error-for="lastNamePaternal"></p>
+          </div>
+          <div class="field">
+            <label class="field__label" for="lastNameMaternal">Apellido materno <span class="field__optional">(opcional)</span></label>
+            <input class="field__input" type="text" id="lastNameMaternal" name="lastNameMaternal" maxlength="60">
+            <p class="field__error" data-error-for="lastNameMaternal"></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="phone">Teléfono</label>
+          <span class="field__hint" id="hint-phone">Cifrado. Solo para avisos de apagón.</span>
+          <input class="field__input" type="tel" id="phone" name="phone" autocomplete="tel-national"
+                 inputmode="tel" maxlength="12" placeholder="787-555-0123" aria-describedby="hint-phone">
+          <p class="field__error" data-error-for="phone"></p>
+        </div>
+
+        <div class="field">
+          <span class="field__label" id="lbl-channel">¿Por dónde prefiere recibir los avisos?</span>
+          <div class="choices" role="radiogroup" aria-labelledby="lbl-channel">
+            <label class="choice"><input type="radio" name="notifyChannel" value="sms"><span>Mensaje de texto</span></label>
+            <label class="choice"><input type="radio" name="notifyChannel" value="whatsapp"><span>WhatsApp</span></label>
+          </div>
+          <p class="field__error" data-error-for="notifyChannel"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="address">Dirección física</label>
+          <span class="field__hint" id="hint-address">Calle, número, urbanización o barrio.</span>
+          <input class="field__input" type="text" id="address" name="address" autocomplete="street-address"
+                 maxlength="200" aria-describedby="hint-address">
+          <p class="field__error" data-error-for="address"></p>
+          <button type="button" class="btn btn--secondary btn--small" id="btn-location">Usar mi ubicación (opcional)</button>
+          <span class="field__hint" id="location-status" aria-live="polite"></span>
+          <p class="field__error" data-error-for="gps"></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="municipioId">Pueblo</label>
+            <select class="field__select" id="municipioId" name="municipioId">
+              <option value="">Selecciona el pueblo</option>
+            </select>
+            <p class="field__error" data-error-for="municipioId"></p>
+          </div>
+          <div class="field">
+            <label class="field__label" for="zipCode">Código postal</label>
+            <input class="field__input" type="text" id="zipCode" name="zipCode" autocomplete="postal-code"
+                   inputmode="numeric" maxlength="5" placeholder="00685">
+            <p class="field__error" data-error-for="zipCode"></p>
+          </div>
+        </div>
+
+        <div class="notice notice--warn" id="municipio-not-participating" hidden>
+          ▲ Este municipio aún no participa. LUMA y los contactos sí podrán recibir alertas.
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="lumaMeter">Número de contador de LUMA <span class="field__optional">(opcional)</span></label>
+          <span class="field__hint" id="hint-meter">Aparece en la factura de luz.</span>
+          <input class="field__input" type="text" id="lumaMeter" name="lumaMeter" maxlength="20" aria-describedby="hint-meter">
+          <p class="field__error" data-error-for="lumaMeter"></p>
+        </div>
+
+        <div class="field">
+          <span class="field__label" id="lbl-alone">¿Vive solo o sola?</span>
+          <div class="choices" role="radiogroup" aria-labelledby="lbl-alone">
+            <label class="choice"><input type="radio" name="livesAlone" value="yes"><span>Sí</span></label>
+            <label class="choice"><input type="radio" name="livesAlone" value="no"><span>No</span></label>
+          </div>
+          <p class="field__error" data-error-for="livesAlone"></p>
+        </div>
+
+        <div class="field">
+          <span class="field__label" id="lbl-mobility">¿Puede salir de la casa por su cuenta?</span>
+          <div class="choices" role="radiogroup" aria-labelledby="lbl-mobility">
+            <label class="choice"><input type="radio" name="mobilityLimited" value="no"><span>Sí</span></label>
+            <label class="choice"><input type="radio" name="mobilityLimited" value="yes"><span>No, necesita ayuda</span></label>
+          </div>
+          <p class="field__error" data-error-for="mobilityLimited"></p>
+        </div>
+      </section>
+
+      <!-- 3. Contacto -->
+      <section class="card">
+        <h2 class="card__head"><span class="card__num">3</span> Contacto en caso de apagón</h2>
+        <p class="card__hint">Una persona de confianza a quien podamos avisar si no hay respuesta.</p>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="cg-firstName">Nombre</label>
+            <input class="field__input" type="text" id="cg-firstName" name="caregiver.firstName" maxlength="60">
+            <p class="field__error" data-error-for="caregiver.firstName"></p>
+          </div>
+          <div class="field">
+            <label class="field__label" for="cg-lastNames">Apellidos</label>
+            <input class="field__input" type="text" id="cg-lastNames" name="caregiver.lastNames" maxlength="60">
+            <p class="field__error" data-error-for="caregiver.lastNames"></p>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="cg-phone">Teléfono</label>
+            <input class="field__input" type="tel" id="cg-phone" name="caregiver.phone" inputmode="tel" maxlength="12" placeholder="787-555-0123">
+            <p class="field__error" data-error-for="caregiver.phone"></p>
+          </div>
+          <div class="field">
+            <label class="field__label" for="cg-email">Correo electrónico <span class="field__optional">(opcional)</span></label>
+            <input class="field__input" type="email" id="cg-email" name="caregiver.email" inputmode="email">
+            <p class="field__error" data-error-for="caregiver.email"></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="cg-relationship">Relación</label>
+            <select class="field__select" id="cg-relationship" name="caregiver.relationship">
+                <option value="">Selecciona la relación</option>
+                <option value="child">Hijo o hija</option>
+                <option value="spouse">Esposo, esposa o pareja</option>
+                <option value="parent">Padre o madre</option>
+                <option value="sibling">Hermano o hermana</option>
+                <option value="grandchild">Nieto o nieta</option>
+                <option value="other_family">Otro familiar</option>
+                <option value="neighbor">Vecino o vecina</option>
+                <option value="friend">Amigo o amiga</option>
+                <option value="professional_caregiver">Cuidador profesional</option>
+            </select>
+            <p class="field__error" data-error-for="caregiver.relationship"></p>
+        </div>
+      </section>
+
+      <!-- 4. Consentimientos -->
+      <section class="card">
+        <h2 class="card__head"><span class="card__num">4</span> ¿Quién puede ver la información?</h2>
+        <p class="card__hint">Solo tú decides. Puedes cambiarlo cuando quieras.</p>
+
+        <div class="consent consent--required">
+          <div class="consent__row">
+            <div class="consent__text">
+              <span class="consent__name">Comunicarnos durante emergencias <span class="consent__badge">Requerido</span></span>
+              <span class="consent__desc">Te escribimos por mensaje de texto o WhatsApp durante un apagón y usamos el pueblo para saber si hay apagones en el área.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" name="consents.service" aria-label="Autorizo comunicación durante emergencias">
+              <span class="toggle__track"></span><span class="toggle__knob"></span>
+            </label>
+          </div>
+          <details class="consent__details">
+            <summary>Ver detalles</summary>
+            <p>Autorizo a Energía Vital a comunicarse conmigo por mensaje de texto, WhatsApp o llamada en caso de emergencia, y a utilizar el municipio donde resido para identificar posibles interrupciones del servicio eléctrico en mi área y enviarme alertas, recomendaciones de seguridad y comunicaciones de seguimiento.</p>
+            <p>Entiendo que una interrupción reportada en mi municipio no necesariamente significa que mi hogar esté sin electricidad.</p>
+          </details>
+          <p class="field__error" data-error-for="consents.service"></p>
+        </div>
+
+        <div class="consent">
+          <div class="consent__row">
+            <div class="consent__text">
+              <span class="consent__name">Contacto de emergencia</span>
+              <span class="consent__desc">Recibe un aviso si no hay respuesta durante un apagón.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" name="consents.caregiver" aria-label="Autorizo avisar al contacto de emergencia">
+              <span class="toggle__track"></span><span class="toggle__knob"></span>
+            </label>
+          </div>
+          <details class="consent__details">
+            <summary>Ver detalles</summary>
+            <p>Autorizo a Energía Vital a enviar alertas y notificaciones a los cuidadores o contactos de emergencia que yo registre, en caso de un apagón o una situación que pueda afectar mi seguridad o el funcionamiento de mis equipos médicos eléctricos.</p>
+            <p>Entiendo que estas notificaciones pueden incluir mi nombre, dirección, situación de energía eléctrica y la información necesaria para que mi contacto pueda brindarme apoyo.</p>
+          </details>
+        </div>
+
+        <div class="consent">
+          <div class="consent__row">
+            <div class="consent__text">
+              <span class="consent__name">LUMA</span>
+              <span class="consent__desc">Ve la dirección, el número de contador y que hay dependencia de equipo eléctrico.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" name="consents.luma" aria-label="Autorizo compartir con LUMA">
+              <span class="toggle__track"></span><span class="toggle__knob"></span>
+            </label>
+          </div>
+          <details class="consent__details">
+            <summary>Ver detalles</summary>
+            <p>Autorizo a Energía Vital a compartir mi nombre, dirección física, información de contacto y datos limitados sobre mi dependencia de equipos médicos eléctricos con LUMA Energy.</p>
+            <p>Esta información podrá utilizarse para identificar hogares con necesidades médicas relacionadas con el servicio eléctrico y apoyar la evaluación de necesidades durante apagones o emergencias de la red eléctrica.</p>
+            <p><strong>Entiendo que esta autorización no garantiza prioridad de reconexión, restablecimiento del servicio ni asistencia inmediata.</strong></p>
+          </details>
+        </div>
+
+        <div class="consent" id="consent-municipio">
+          <div class="consent__row">
+            <div class="consent__text">
+              <span class="consent__name">Oficina de Manejo de Emergencias del pueblo</span>
+              <span class="consent__desc">Ve el contacto, la ubicación y el tipo de equipo durante un apagón, y puede llamar para coordinar ayuda.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" name="consents.municipio" aria-label="Autorizo compartir con la oficina de emergencias del pueblo">
+              <span class="toggle__track"></span><span class="toggle__knob"></span>
+            </label>
+          </div>
+          <details class="consent__details">
+            <summary>Ver detalles</summary>
+            <p>Autorizo a Energía Vital a compartir mi nombre, dirección física, información de contacto y datos limitados sobre mi dependencia de equipos médicos eléctricos con la Oficina Municipal de Manejo de Emergencias de mi pueblo, y autorizo a dicha oficina a comunicarse conmigo por teléfono, para facilitar la coordinación de asistencia durante apagones o emergencias.</p>
+            <p><strong>Entiendo que esta autorización no garantiza asistencia inmediata.</strong></p>
+          </details>
+        </div>
+      </section>
+
+      <div class="notice notice--error" id="form-error" role="alert" hidden></div>
+
+      <button type="submit" class="btn btn--primary btn--lead btn--block" id="btn-submit">
+        Completar registro <span aria-hidden="true">→</span>
+      </button>
+    </form>
+
+    <!-- ===== Success ===== -->
+    <section class="card card--success" id="success" hidden>
+      <h2 class="card__title" id="success-title">● ¡Listo! El registro está completo.</h2>
+      <p class="card__hint">Esto es lo que pasará:</p>
+      <ol class="next-steps">
+        <li id="step-notify">Si se va la luz en tu pueblo, te enviaremos un mensaje.</li>
+        <li>Respondes con un toque: <strong>Estoy bien</strong> o <strong>Necesito ayuda</strong>.</li>
+        <li id="step-escalate">Si no hay respuesta, avisamos a quienes autorizaste.</li>
+      </ol>
+      <div class="demo-box" id="demo-box" hidden>
+        <span class="label-mono">Modo demostración</span>
+        <p>En la vida real, este enlace llega por mensaje. Para la demostración, puedes abrirlo aquí.</p>
+        <a class="btn btn--secondary btn--small" id="demo-link" href="#" target="_blank" rel="noopener">Abrir enlace personal →</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">Prototipo · Caribbean AI Summit Hackathon 2026 · Todos los datos de la demostración son ficticios.</div>
+  </footer>
+
+  <script src="/js/signup.js" defer></script>
+</body>
+</html>
