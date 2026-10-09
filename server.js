@@ -47,10 +47,18 @@ app.get('/api/session', (req, res) => {
   } : null);
 });
 
+function isSameHost(origin, req) {
+  try {
+    return new URL(origin).host === req.get('host');
+  } catch {
+    return false;
+  }
+}
+
 app.use('/api', (req, res, next) => {
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
-  const origin = req.get('origin');
-  if (origin && !allowedOrigins.has(origin)) {
+ const origin = req.get('origin');
+  if (origin && !allowedOrigins.has(origin) && !isSameHost(origin, req)) {
     return res.status(403).json({ error: 'Origen no permitido.' });
   }
   next();
