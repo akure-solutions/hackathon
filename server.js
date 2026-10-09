@@ -59,6 +59,7 @@ app.use('/api', (req, res, next) => {
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
  const origin = req.get('origin');
   if (origin && !allowedOrigins.has(origin) && !isSameHost(origin, req)) {
+    console.warn('[origin] rejected', origin, 'host:', req.get('host'));
     return res.status(403).json({ error: 'Origen no permitido.' });
   }
   next();
