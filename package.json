@@ -1,0 +1,33 @@
+{
+  "name": "hackathon",
+  "version": "1.0.0",
+  "description": "Registro con consentimiento para pacientes electrodependientes en Puerto Rico.\r Caribbean AI Summit Healthcare Hackathon 2026 (Oct 8–10).",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "seed": "node db/seed.js",
+    "demo": "node db/reset.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akure-solutions/hackathon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/akure-solutions/hackathon/issues"
+  },
+  "homepage": "https://github.com/akure-solutions/hackathon#readme",
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3"
+  }
+}
