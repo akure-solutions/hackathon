@@ -30,6 +30,11 @@ function partnerFor(role) {
 }
 
 const selectOutage = db.prepare('SELECT id, source, started_at FROM outages WHERE id = ?');
+const selectActiveReport = db.prepare(`
+  SELECT 1 FROM outages
+  WHERE scope_type = 'resident' AND resident_id = ? AND source = 'resident_report' AND ended_at IS NULL
+  LIMIT 1
+`);
 const selectStep = db.prepare(`
   SELECT at FROM escalation_events WHERE outage_id = ? AND resident_id = ? AND step = ?
 `);
@@ -53,7 +58,8 @@ function deriveCase(rec) {
 
   return {
     inOutage,
-    power: !inOutage ? 'none' : outage.source === 'resident_report' ? 'confirmed' : 'area',
+    power: !inOutage ? 'none'
+      : (outage.source === 'resident_report' || selectActiveReport.get(rec.id)) ? 'confirmed' : 'area',
     outageStartedAt: outage ? outage.started_at : null,
     batteryRemainingHours: inOutage ? rec.survivalWindowHours - rec.elapsedMs / HOUR : null,
     caregiverNotifiedAt: caregiverStep ? caregiverStep.at : null,

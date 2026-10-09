@@ -8,6 +8,7 @@ const { nextEscalation } = require('../rules');
 const engine = require('../engine');
 const { resetAccessSignatures } = require('../dashboardData');
 const notify = require('../notify');
+const records = require('../records');
 const { setViewer, clearViewer } = require('../auth');
 const { resolvePersona, listPersonas } = require('../personas');
 
@@ -86,6 +87,58 @@ router.post('/role', requireDemo, (req, res) => {
 router.post('/role/clear', requireDemo, (req, res) => {
   clearViewer(res);
   res.json({ cleared: true });
+});
+
+// Simulated resident responses for the active town outage (demo only, clearly labeled).
+// Uses the same tables and audits as the real check-in page. The live demo resident is skipped.
+const DEMO_RESIDENT_ID = 1; // Doña Carmen: answers live from the phone
+const insertScenarioCheckin = db.prepare(`
+  INSERT INTO checkins (outage_id, resident_id, response, channel, at) VALUES (?, ?, ?, 'web', ?)
+`);
+const insertScenarioReport = db.prepare(`
+  INSERT INTO outages (scope_type, resident_id, source, started_at) VALUES ('resident', ?, 'resident_report', ?)
+`);
+const hasActiveReport = db.prepare(`
+  SELECT 1 FROM outages WHERE scope_type = 'resident' AND resident_id = ? AND ended_at IS NULL LIMIT 1
+`);
+const hasCheckin = db.prepare('SELECT 1 FROM checkins WHERE outage_id = ? AND resident_id = ? LIMIT 1');
+
+router.post('/scenario', requireDemo, (req, res) => {
+  const municipioId = req.body && req.body.municipioId ? Number(req.body.municipioId) : null;
+  const outage = selectActiveMunicipioOutage.get(municipioId, municipioId);
+  if (!outage) return res.status(409).json({ error: 'Primero simula un apagón.' });
+
+  const residents = records.listByMunicipio(outage.municipioId)
+    .filter((r) => r.id !== DEMO_RESIDENT_ID)
+    .sort((a, b) => a.id - b.id);
+  const at = clock.nowSimIso();
+  const counts = { reported: 0, ok: 0, help: 0 };
+
+  db.transaction(() => {
+    residents.forEach((r, i) => {
+      // About 1 in 3 confirm "Se fue la luz" in their home.
+      if (i % 3 === 2 && !hasActiveReport.get(r.id)) {
+        insertScenarioReport.run(r.id, at);
+        counts.reported += 1;
+        audit('OUTAGE_REPORTED', { actorRole: 'demo', residentId: r.id, details: { simulated: true } });
+      }
+
+      // A few ask for help, about 1 in 4 are fine, and the rest stay awaiting.
+      if (hasCheckin.get(outage.id, r.id)) return;
+      const response = i % 9 === 1 ? 'help' : i % 4 === 0 ? 'ok' : null;
+      if (!response) return;
+      insertScenarioCheckin.run(outage.id, r.id, response, at);
+      counts[response] += 1;
+      audit('CHECKIN_RECEIVED', {
+        actorRole: 'demo', residentId: r.id,
+        details: { response, outageId: outage.id, simulated: true },
+      });
+    });
+  })();
+
+  audit('DEMO_SCENARIO_APPLIED', { actorRole: 'demo', details: { outageId: outage.id, ...counts } });
+  engine.tick(); // "Necesito ayuda" escalates right away
+  res.json({ outageId: outage.id, ...counts });
 });
 
 router.get('/messages', requireDemo, (req, res) => {

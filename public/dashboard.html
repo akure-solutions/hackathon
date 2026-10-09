@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Panel de Respuesta · Energía Vital</title>
+  <link rel="icon" href="/img/logo-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/fonts.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body class="dash">
+
+  <!-- ===== Simulated clock (demo) ===== -->
+  <div class="clock" id="clock-banner">
+    <div class="clock__inner">
+      <span class="clock__badge"><span class="clock__pulse" aria-hidden="true"></span>RELOJ SIMULADO</span>
+      <span class="clock__time">
+        <span class="clock__hm" id="clock-time">--:--</span>
+        <span class="clock__date" id="clock-date"></span>
+      </span>
+      <span class="clock__divider" aria-hidden="true"></span>
+      <span class="clock__outage">
+        <span class="clock__outage-title" id="outage-title">Sin apagón activo</span>
+        <span class="clock__outage-elapsed" id="outage-elapsed"></span>
+      </span>
+      <span class="clock__next" id="next-wrap" hidden>
+        <span class="clock__next-text" id="next-text"></span>
+        <span class="clock__bar"><span class="clock__bar-fill" id="next-bar"></span></span>
+      </span>
+      <span class="clock__spacer"></span>
+      <span class="clock__controls">
+        <button type="button" class="clock__btn clock__btn--simulate" id="btn-simulate">⚡ Simular apagón</button>
+        <button type="button" class="clock__btn" data-ff="15">+15 min</button>
+        <button type="button" class="clock__btn" data-ff="60">+1 h</button>
+        <button type="button" class="clock__btn clock__btn--strong" data-ff="240">+4 h ⏩</button>
+        <button type="button" class="clock__btn clock__btn--scenario" id="btn-scenario">▶ Simular respuestas</button>
+        <button type="button" class="clock__btn clock__btn--link" id="btn-reset">Reiniciar</button>
+      </span>
+    </div>
+  </div>
+
+  <!-- ===== Header ===== -->
+  <header class="topbar">
+    <div class="topbar__inner">
+      <span class="topbar__brand">
+        <img src="/img/logo-icon.svg" alt="" class="topbar__logo">
+        <span class="topbar__titles">
+          <span class="topbar__name">Energía Vital</span>
+          <span class="topbar__scope" id="header-scope">Panel de respuesta</span>
+        </span>
+      </span>
+      <span class="topbar__spacer"></span>
+      <span class="topbar__live"><span class="topbar__live-dot" aria-hidden="true"></span><strong>En vivo</strong> · se actualiza cada 5 s</span>
+
+      <span class="persona">
+        <button type="button" class="persona__btn" id="persona-btn" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar" id="persona-avatar">··</span>
+          <span class="persona__text">
+            <strong id="persona-name">Selecciona un perfil</strong>
+            <span id="persona-role"></span>
+          </span>
+          <span class="persona__caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="persona__menu" id="persona-menu" hidden>
+          <span class="persona__menu-title">VER DEMO COMO</span>
+          <div id="persona-list"></div>
+        </div>
+      </span>
+    </div>
+  </header>
+
+  <main class="dash__main">
+
+        <!-- KPIs -->
+    <section class="kpis" aria-label="Resumen">
+      <div class="kpis__group">
+        <button type="button" class="kpi" data-kpi="registered" data-filter="">
+          <span class="kpi__label"><span class="kpi__icon kpi__icon--navy">◆</span>Registrados</span>
+          <span class="kpi__n" data-n>0</span>
+          <span class="kpi__sub">Residentes registrados</span>
+        </button>
+        <button type="button" class="kpi" data-kpi="possiblyAffected" data-filter="">
+          <span class="kpi__label"><span class="kpi__icon kpi__icon--coral">⚡</span>Posibles afectados</span>
+          <span class="kpi__n" data-n>0</span>
+          <span class="kpi__sub">En área con apagón</span>
+        </button>
+        <button type="button" class="kpi" data-kpi="confirmedOutage" data-filter="">
+          <span class="kpi__label"><span class="kpi__icon kpi__icon--coral">⚡</span>Reportes de apagón</span>
+          <span class="kpi__n" data-n>0</span>
+          <span class="kpi__sub">Confirmados por residentes</span>
+        </button>
+      </div>
+      <div class="kpis__group">
+        <button type="button" class="kpi kpi--help" data-kpi="help" data-filter="help">
+          <span class="kpi__label"><img class="kpi__img" src="/img/status/help.svg" alt="">Requieren asistencia</span>
+          <span class="kpi__n" data-n>0</span>
+          <span class="kpi__sub">Escalado a tu equipo</span>
+        </button>
+        <button type="button" class="kpi" data-kpi="awaiting" data-filter="awaiting">
+          <span class="kpi__label"><img class="kpi__img" src="/img/status/awaiting.svg" alt="">Esperando check-in</span>
+          <span class="kpi__n" data-n>0</span>
+          <span class="kpi__sub">No han respondido</span>
+        </button>
+        <button type="button" class="kpi" data-kpi="ok" data-filter="ok">
+          <span class="kpi__label"><img class="kpi__img" src="/img/status/ok.svg" alt="">Están bien</span>
+          <span class="kpi__n" data-n>0</span>
+          <span class="kpi__sub">Respondieron «Estoy bien»</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Map + feed -->
+    <div class="dash__row" id="map-row">
+      <section class="card card--map" id="map-card">
+        <div class="card__head">
+          <strong class="card__title">Monitoreo de apagón y riesgo</strong>
+          <span class="card__spacer"></span>
+          <button type="button" class="pill is-on" id="toggle-zones" aria-pressed="true">Zonas</button>
+          <button type="button" class="pill is-on" id="toggle-residents" aria-pressed="true">Residentes</button>
+        </div>
+        <div class="luma-tiles" id="luma-tiles">
+          <div class="luma-tile">
+            <span class="luma-tile__label">FUENTE LUMA</span>
+            <span class="source-pill" id="luma-source"><span class="source-pill__dot"></span><span id="luma-source-text">Cargando…</span></span>
+          </div>
+          <div class="luma-tile">
+            <span class="luma-tile__label">ÚLTIMA ACTUALIZACIÓN</span>
+            <span class="luma-tile__value" id="luma-updated">—</span>
+          </div>
+          <div class="luma-tile">
+            <span class="luma-tile__label">CLIENTES SIN LUZ · REGIÓN</span>
+            <span class="luma-tile__value" id="luma-customers">—</span>
+          </div>
+          <div class="luma-tile">
+            <span class="luma-tile__label">REGIÓN LUMA</span>
+            <span class="luma-tile__value" id="luma-region">—</span>
+          </div>
+        </div>
+        <div class="map" id="map" role="img" aria-label="Mapa esquemático por barrio">
+          <span class="map__note" id="map-note">Esquema · ubicación aproximada por barrio</span>
+        </div>
+        <div class="map-legend">
+          <span><span class="legend legend--zone"></span>Área con apagón</span>
+          <span><span class="legend legend--confirmed"></span>Confirmado por residente</span>
+          <span><img class="legend__img" src="/img/status/ok.svg" alt="">Está bien</span>
+          <span><img class="legend__img" src="/img/status/awaiting.svg" alt="">Esperando check-in</span>
+          <span><img class="legend__img" src="/img/status/help.svg" alt="">Pidió ayuda</span>
+        </div>
+      </section>
+
+      <section class="card card--feed" id="feed-card">
+        <div class="card__head card__head--border">
+          <strong class="card__title">Alertas y escalamiento</strong>
+          <span class="card__sub">Más recientes arriba · hora simulada</span>
+        </div>
+        <ol class="feed" id="feed"></ol>
+        <p class="card__empty" id="feed-empty">Sin alertas todavía.</p>
+      </section>
+    </div>
+
+    <!-- Cases (responder) -->
+    <section class="card" id="cases-card" hidden>
+      <div class="card__head card__head--wrap">
+        <strong class="card__title card__title--lg">Casos activos</strong>
+        <span class="card__sub" id="cases-count"></span>
+        <span class="card__spacer"></span>
+        <span class="card__lock" id="cases-hidden"></span>
+      </div>
+      <div class="filters">
+        <label class="filter">
+          <span class="filter__label">EQUIPO</span>
+          <select id="f-equip">
+            <option value="all">Todos</option>
+            <option value="breathing">Respiración</option>
+            <option value="dialysis">Diálisis</option>
+            <option value="feeding">Alimentación / infusión</option>
+            <option value="refrigeration">Refrigeración</option>
+            <option value="mobility">Movilidad</option>
+          </select>
+        </label>
+        <label class="filter">
+          <span class="filter__label">BATERÍA RESTANTE</span>
+          <select id="f-battery">
+            <option value="all">Cualquiera</option>
+            <option value="1">1 h o menos</option>
+            <option value="3">3 h o menos</option>
+            <option value="6">6 h o menos</option>
+          </select>
+        </label>
+        <label class="filter">
+          <span class="filter__label">ESTADO DEL CASO</span>
+          <select id="f-case">
+            <option value="all">Todos</option>
+            <option value="pending">Pendiente de respondedor</option>
+            <option value="monitor">En monitoreo</option>
+            <option value="attempted">Contacto intentado</option>
+            <option value="coordinated">Asistencia coordinada</option>
+            <option value="followup">Seguimiento requerido</option>
+            <option value="resolved">Resuelto</option>
+          </select>
+        </label>
+        <button type="button" class="chip" id="f-help" aria-pressed="false">■ Pidió ayuda</button>
+        <button type="button" class="link-btn" id="f-clear" hidden>Limpiar</button>
+      </div>
+      <div class="table-wrap">
+        <div class="table">
+          <div class="table__head">
+            <span>RESIDENTE</span><span>EQUIPO · BATERÍA</span><span>ELECTRICIDAD · CHECK-IN</span><span>ESTADO · CONTACTO</span><span></span>
+          </div>
+          <div id="cases-body"></div>
+          <p class="card__empty" id="cases-empty" hidden>Ningún caso coincide con estos filtros.</p>
+        </div>
+      </div>
+      <p class="card__foot">Ver contacto, llamar y cada cambio de estado quedan en el registro de acceso de tu organización.</p>
+    </section>
+
+    <!-- LUMA list -->
+    <section class="card" id="luma-card" hidden>
+      <div class="card__head card__head--wrap">
+        <strong class="card__title card__title--lg">Hogares con dependencia eléctrica</strong>
+        <span class="card__sub" id="luma-count"></span>
+        <span class="card__spacer"></span>
+        <span class="card__lock" id="luma-hidden"></span>
+      </div>
+      <div class="table-wrap">
+        <div class="table table--luma">
+          <div class="table__head">
+            <span>RESIDENTE</span><span>CONTADOR · RESPALDO</span><span>BATERÍA · ESTADO</span><span>TIPO DE EQUIPO</span>
+          </div>
+          <div id="luma-body"></div>
+        </div>
+      </div>
+      <p class="card__foot">LUMA ve solo hogares que autorizaron compartir con LUMA. Esta autorización no garantiza prioridad de reconexión.</p>
+    </section>
+
+    <!-- Analyst -->
+    <section class="card" id="analyst-card" hidden>
+      <div class="card__head card__head--border card__head--wrap">
+        <strong class="card__title card__title--lg">Resumen por barrio</strong>
+        <span class="card__sub" id="analyst-note"></span>
+      </div>
+      <div class="table-wrap">
+        <div class="table table--analyst">
+          <div class="table__head">
+            <span>BARRIO</span><span>REGISTRADOS</span><span class="t-rojo">■ AYUDA</span><span class="t-amarillo">▲ ESPERANDO</span><span class="t-verde">● BIEN</span><span>ELECTRICIDAD</span>
+          </div>
+          <div id="analyst-body"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Access log -->
+    <section class="card" id="access-card" hidden>
+      <div class="card__head card__head--border card__head--wrap">
+        <strong class="card__title">Registro de acceso</strong>
+        <span class="card__sub">Quién vio qué. Cada vista queda registrada · hora real</span>
+      </div>
+      <ol class="access" id="access-list"></ol>
+      <p class="card__empty" id="access-empty">Sin accesos registrados todavía.</p>
+    </section>
+
+    <p class="dash__foot">Prototipo · Caribbean AI Summit Hackathon 2026 · Todos los residentes, teléfonos y datos de demostración son ficticios. Datos de LUMA: fuente pública no oficial, indicador regional.</p>
+  </main>
+
+  <!-- ===== Case drawer ===== -->
+  <div class="drawer-overlay" id="drawer-overlay" hidden></div>
+  <aside class="drawer" id="drawer" hidden aria-labelledby="d-name">
+    <div class="drawer__head">
+      <div class="drawer__title-row">
+        <span class="drawer__titles">
+          <span class="drawer__name" id="d-name"></span>
+          <span class="drawer__addr" id="d-addr"></span>
+        </span>
+        <button type="button" class="drawer__close" id="d-close" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="drawer__badges">
+        <span class="status" id="d-status"></span>
+        <span class="case-label" id="d-case"></span>
+      </div>
+      <span class="drawer__consent">✓ Consentimiento verificado: autorizó compartir con tu oficina de emergencias</span>
+    </div>
+    <div class="drawer__body">
+      <div class="drawer__section">
+        <span class="drawer__label">CONTACTO</span>
+        <div class="contact">
+          <span class="contact__text"><span class="contact__who">Residente</span><span class="contact__phone" id="d-phone"></span></span>
+          <a class="btn btn--primary btn--dashboard" id="d-call" href="#">Llamar</a>
+        </div>
+        <div class="contact" id="d-cg-wrap">
+          <span class="contact__text"><span class="contact__who" id="d-cg-name"></span><span class="contact__phone" id="d-cg-phone"></span></span>
+          <a class="btn btn--secondary btn--dashboard" id="d-cg-call" href="#">Contactar</a>
+        </div>
+      </div>
+      <div class="facts">
+        <div class="fact"><span class="fact__label">Equipo médico</span><strong id="d-equip"></strong></div>
+        <div class="fact"><span class="fact__label">Batería restante</span><strong id="d-battery"></strong></div>
+        <div class="fact"><span class="fact__label">Electricidad</span><strong id="d-power"></strong></div>
+        <div class="fact"><span class="fact__label">Respaldo · movilidad</span><strong id="d-backup"></strong></div>
+      </div>
+      <div class="drawer__section">
+        <span class="drawer__label">ACTUALIZAR CASO</span>
+        <div class="case-actions">
+          <button type="button" class="case-action" data-action="attempted">Contacto intentado</button>
+          <button type="button" class="case-action" data-action="coordinated">Asistencia coordinada</button>
+          <button type="button" class="case-action" data-action="followup">Seguimiento requerido</button>
+          <button type="button" class="case-action" data-action="resolved">Resuelto</button>
+        </div>
+      </div>
+      <div class="drawer__section">
+        <label class="drawer__label" for="d-note">NOTA DE RESPUESTA</label>
+        <textarea id="d-note" class="drawer__note" maxlength="500" placeholder="Ej. Hablé con su hija. Va de camino con un generador."></textarea>
+        <button type="button" class="btn btn--dashboard drawer__save" id="d-save-note">Guardar nota</button>
+      </div>
+      <div class="drawer__section">
+        <span class="drawer__label">HISTORIAL DEL CASO</span>
+        <ol class="history" id="d-history"></ol>
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="/js/dashboard.js" defer></script>
+  <script src="/js/dashboard-map.js" defer></script>
+</body>
+</html>

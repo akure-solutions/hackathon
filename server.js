@@ -13,6 +13,8 @@ const outagesRouter = require('./src/routes/outages');
 const demoRouter = require('./src/routes/demo');
 const checkinRouter = require('./src/routes/checkin');
 const dashboardRouter = require('./src/routes/dashboard');
+const lumaRouter = require('./src/routes/luma');
+const lumaFeed = require('./src/lumaFeed');
 const engine = require('./src/engine');
 const { readViewer } = require('./src/auth');
 
@@ -58,6 +60,7 @@ app.use('/api/residents', residentsRouter);
 app.use('/api/outages', outagesRouter);
 app.use('/api/demo', demoRouter);
 app.use('/api/dashboard', dashboardRouter);
+app.use('/api/luma', lumaRouter);
 app.use(checkinRouter);
 
 // Unknown API routes return JSON, not HTML.
@@ -74,4 +77,5 @@ app.use((err, req, res, next) => {
 app.listen(config.port, () => {
   console.log(`Energía Vital running on http://localhost:${config.port}`);
   engine.start();
+  lumaFeed.start();
 });
