@@ -22,6 +22,7 @@ app.use(helmet());
 app.use(express.json({ limit: '20kb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/vendor/fontsource', express.static(path.join(__dirname, 'node_modules', '@fontsource')));
 
 app.get('/health', (req, res) => {
   res.json({ ok: true, time: nowIso(), demoMode: config.demoMode });
