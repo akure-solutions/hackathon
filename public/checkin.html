@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>¿Estás bien? · Energía Vital</title>
+  <link rel="icon" href="/img/logo-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/fonts.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/signup.css">
+  <link rel="stylesheet" href="/css/checkin.css">
+</head>
+<body>
+
+  <section class="hero hero--compact">
+    <div class="wrap">
+      <header class="brand">
+        <span class="brand__tile"><img src="/img/logo-icon.svg" alt=""></span>
+        <span class="brand__name">Energía Vital</span>
+      </header>
+    </div>
+  </section>
+
+  <main class="wrap">
+
+    <!-- Loading -->
+    <section class="card card--gate checkin" id="state-loading">
+      <p class="checkin__text">Cargando…</p>
+    </section>
+
+    <!-- Invalid link -->
+    <section class="card card--gate checkin" id="state-invalid" hidden>
+      <h1 class="checkin__greeting">No pudimos abrir este enlace.</h1>
+      <p class="checkin__text">Revisa el mensaje más reciente de Energía Vital y toca el enlace otra vez.</p>
+    </section>
+
+    <!-- No active outage -->
+    <section class="card card--gate checkin" id="state-calm" hidden>
+      <h1 class="checkin__greeting" id="calm-greeting">Hola.</h1>
+      <p class="checkin__text" id="calm-text">No tenemos apagones reportados en tu pueblo.</p>
+      <p class="checkin__text">Si se fue la luz en tu casa, avísanos y estaremos pendientes.</p>
+      <div class="checkin__actions">
+        <button type="button" class="btn btn--primary btn--lead" id="btn-report">
+          Se fue la luz en mi casa <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Active outage -->
+    <section class="card card--gate checkin" id="state-outage" hidden>
+      <span class="outage-label" id="outage-label">▲ Apagón</span>
+      <h1 class="checkin__greeting" id="outage-greeting">¿Estás bien?</h1>
+      <p class="checkin__text" id="outage-intro">Toca un botón para decirnos cómo estás.</p>
+
+      <div class="result" id="result" role="status" aria-live="polite" hidden>
+        <span class="result__icon" id="result-icon" aria-hidden="true"></span>
+        <div>
+          <p class="result__title" id="result-title"></p>
+          <p class="result__body" id="result-body"></p>
+        </div>
+      </div>
+
+      <div class="checkin__actions">
+        <button type="button" class="btn btn--primary btn--lead" data-response="ok">
+          ● Estoy bien <span aria-hidden="true">→</span>
+        </button>
+        <button type="button" class="btn btn--urgent btn--lead" data-response="help">
+          ■ Necesito ayuda <span aria-hidden="true">→</span>
+        </button>
+      </div>
+
+      <p class="emergency-note">Si es una emergencia médica, llama al <strong>9-1-1</strong>.</p>
+    </section>
+
+    <div class="notice notice--error" id="checkin-error" role="alert" hidden></div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">Prototipo · Caribbean AI Summit Hackathon 2026 · Todos los datos de la demostración son ficticios.</div>
+  </footer>
+
+  <script src="/js/checkin.js" defer></script>
+</body>
+</html>

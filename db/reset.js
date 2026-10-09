@@ -3,7 +3,7 @@ const db = require('../src/db');
 const { seedAll } = require('./seed');
 
 const TABLES_IN_DELETE_ORDER = [
-  'access_log', 'audit_log', 'escalation_events', 'checkins', 'checkin_tokens',
+  'access_log', 'audit_log', 'case_actions', 'escalation_events', 'checkins', 'checkin_tokens',
   'outages', 'consents', 'caregivers', 'residents', 'app_state',
 ];
 

@@ -11,7 +11,10 @@ const municipiosRouter = require('./src/routes/municipios');
 
 const outagesRouter = require('./src/routes/outages');
 const demoRouter = require('./src/routes/demo');
+const checkinRouter = require('./src/routes/checkin');
+const dashboardRouter = require('./src/routes/dashboard');
 const engine = require('./src/engine');
+const { readViewer } = require('./src/auth');
 
 const allowedOrigins = new Set([
   `http://localhost:${config.port}`,
@@ -25,11 +28,20 @@ app.set('trust proxy', 1);
 app.use(helmet());
 app.use(express.json({ limit: '20kb' }));
 app.use(cookieParser());
+app.use(readViewer);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/vendor/fontsource', express.static(path.join(__dirname, 'node_modules', '@fontsource')));
 
 app.get('/health', (req, res) => {
   res.json({ ok: true, time: nowIso(), demoMode: config.demoMode });
+});
+
+app.get('/api/session', (req, res) => {
+  const v = req.viewer;
+  res.json(v ? {
+    personaId: v.personaId, role: v.role, municipioId: v.municipioId, municipioName: v.municipioName,
+    name: v.name, initials: v.initials, roleLabel: v.roleLabel, org: v.org, can: v.can, avatar: v.avatar, label: v.label,
+  } : null);
 });
 
 app.use('/api', (req, res, next) => {
@@ -45,6 +57,8 @@ app.use('/api/municipios', municipiosRouter);
 app.use('/api/residents', residentsRouter);
 app.use('/api/outages', outagesRouter);
 app.use('/api/demo', demoRouter);
+app.use('/api/dashboard', dashboardRouter);
+app.use(checkinRouter);
 
 // Unknown API routes return JSON, not HTML.
 app.use('/api', (req, res) => {

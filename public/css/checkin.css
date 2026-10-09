@@ -1,0 +1,74 @@
+/* Check-in page. Shared hero/card/button styles come from signup.css. */
+
+.hero--compact { padding-bottom: 120px; }
+
+.checkin { gap: 16px; }
+
+.checkin__greeting {
+  margin: 0;
+  font-family: var(--ev-font-display);
+  font-weight: 800;
+  font-size: clamp(30px, 6vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* Brand rule: the check-in page uses 20px body text. */
+.checkin__text {
+  margin: 0;
+  font-size: var(--ev-text-body-l);
+  line-height: 1.5;
+}
+
+.checkin__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 4px;
+}
+.checkin__actions .btn {
+  width: 100%;
+  min-height: 72px;
+  font-size: 21px;
+}
+.checkin__actions .btn:disabled { opacity: 0.6; }
+
+.btn--urgent:hover:not(:disabled) { background: #B52E1C; }
+
+.outage-label {
+  align-self: flex-start;
+  padding: 6px 12px;
+  border-radius: var(--ev-radius-pill);
+  background: var(--ev-amarillo-bg);
+  color: var(--ev-amarillo-fg);
+  font-family: var(--ev-font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* Confirmation after a response: icon + word + color, never color alone. */
+.result {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 18px;
+}
+.result__icon { font-size: 24px; line-height: 1.2; }
+.result__title { margin: 0 0 4px; font-family: var(--ev-font-display); font-weight: 700; font-size: 20px; }
+.result__body { margin: 0; font-size: 18px; line-height: 1.5; }
+
+.result--ok     { background: var(--ev-verde-bg);    color: var(--ev-verde-fg); }
+.result--help   { background: var(--ev-rojo-bg);     color: var(--ev-rojo-fg); }
+.result--report { background: var(--ev-amarillo-bg); color: var(--ev-amarillo-fg); }
+
+.emergency-note {
+  margin: 0;
+  padding-top: 4px;
+  font-size: 16px;
+  color: var(--ev-slate);
+}
+.emergency-note strong { color: var(--ev-coral-deep); }
+
+#checkin-error { margin-bottom: 24px; }

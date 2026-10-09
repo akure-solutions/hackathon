@@ -5,7 +5,7 @@ const { decrypt } = require('./crypto');
 
 const RESIDENT_COLUMNS = `
   id, first_name, last_name_paternal, last_name_maternal, phone, address, gps, luma_meter,
-  notify_channel, municipio_id, zip_code, equipment_category, survival_window_hours,
+  notify_channel, municipio_id, zip_code, barrio, equipment_category, survival_window_hours,
   backup_power, lives_alone, mobility_limited, subsidy_status, created_at
 `;
 
@@ -19,6 +19,22 @@ const selectActiveConsents = db.prepare(`
 const selectActiveConsentsFor = db.prepare(`
   SELECT partner FROM consents WHERE resident_id = ? AND revoked_at IS NULL
 `);
+
+const selectFirstCaregiver = db.prepare(`
+  SELECT first_name, last_names, phone, relationship FROM caregivers
+  WHERE resident_id = ? ORDER BY id LIMIT 1
+`);
+
+function caregiverContactFor(residentId) {
+  const row = selectFirstCaregiver.get(residentId);
+  if (!row) return null;
+  return {
+    name: [decrypt(row.first_name), decrypt(row.last_names)].filter(Boolean).join(' '),
+    firstName: decrypt(row.first_name),
+    relationship: row.relationship,
+    phone: decrypt(row.phone),
+  };
+}
 
 function parseGps(value) {
   if (!value) return null;
@@ -44,6 +60,8 @@ function toRecord(row) {
     lumaMeter: decrypt(row.luma_meter),
     notifyChannel: row.notify_channel,
     zipCode: row.zip_code,
+    barrio: row.barrio,
+    caregiverContact: caregiverContactFor(row.id),
     lifeSupport: true, // everyone in the registry depends on electric medical equipment
     equipmentCategory: row.equipment_category,
     survivalWindowHours: row.survival_window_hours,

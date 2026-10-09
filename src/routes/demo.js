@@ -6,7 +6,10 @@ const { audit } = require('../audit');
 const clock = require('../clock');
 const { nextEscalation } = require('../rules');
 const engine = require('../engine');
+const { resetAccessSignatures } = require('../dashboardData');
 const notify = require('../notify');
+const { setViewer, clearViewer } = require('../auth');
+const { resolvePersona, listPersonas } = require('../personas');
 
 const router = express.Router();
 
@@ -62,8 +65,27 @@ router.post('/reset', requireDemo, (req, res) => {
   })();
   clock.resetClock();
   engine.resetState();
+  resetAccessSignatures();
   audit('DEMO_RESET', { actorRole: 'demo' });
   res.json({ reset: true });
+});
+
+router.get('/personas', requireDemo, (req, res) => {
+  res.json(listPersonas());
+});
+
+router.post('/role', requireDemo, (req, res) => {
+  const persona = resolvePersona(req.body && req.body.personaId);
+  if (!persona) return res.status(400).json({ error: 'Perfil inválido.' });
+
+  setViewer(req, res, persona.id);
+  audit('ROLE_SWITCHED', { actorRole: persona.role, details: { personaId: persona.id } });
+  res.json({ personaId: persona.id, role: persona.role, municipioId: persona.municipioId, label: persona.label });
+});
+
+router.post('/role/clear', requireDemo, (req, res) => {
+  clearViewer(res);
+  res.json({ cleared: true });
 });
 
 router.get('/messages', requireDemo, (req, res) => {
