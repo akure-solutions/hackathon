@@ -23,4 +23,6 @@ module.exports = {
   publicBaseUrl: process.env.PUBLIC_BASE_URL || 'http://localhost:3000',
   demoMode: process.env.DEMO_MODE === 'true',
   notifyChannel: process.env.NOTIFY_CHANNEL || 'log',
+  resendApiKey: process.env.RESEND_API_KEY || null,
+  demoNotifyEmail: process.env.DEMO_NOTIFY_EMAIL || null,
 };

@@ -73,6 +73,42 @@
     municipioConsent.classList.toggle('consent--disabled', notParticipating);
   });
 
+    // ---------- Barrio: list for San Sebastián (matches the dashboard map), free text elsewhere ----------
+
+  const BARRIOS_BY_TOWN = {
+    'San Sebastián': ['Alto Sano', 'Calabazas', 'Culebrinas', 'Eneas', 'Guatemala', 'Hoyamala',
+      'Juncal', 'Mirasol', 'Piletas', 'Pozas', 'Pueblo', 'Robles'],
+  };
+  const barrioSelect = document.getElementById('barrioSelect');
+  const barrioText = document.getElementById('barrioText');
+  const barrioLabel = document.getElementById('barrio-label');
+
+  function updateBarrioField() {
+    const m = municipiosById.get(municipioSelect.value);
+    const list = m ? BARRIOS_BY_TOWN[m.name] : null;
+    barrioSelect.replaceChildren(new Option('Selecciona el barrio', ''));
+    if (list) {
+      list.forEach((b) => barrioSelect.append(new Option(b, b)));
+      barrioSelect.append(new Option('Otro', '__other'));
+    }
+    barrioSelect.hidden = !list;
+    barrioText.hidden = Boolean(list);
+    barrioText.value = '';
+    barrioLabel.htmlFor = list ? 'barrioSelect' : 'barrioText';
+  }
+
+  barrioSelect.addEventListener('change', () => {
+    const other = barrioSelect.value === '__other';
+    barrioText.hidden = !other;
+    if (other) barrioText.focus();
+  });
+  municipioSelect.addEventListener('change', updateBarrioField);
+
+  function barrioValue() {
+    if (!barrioSelect.hidden && barrioSelect.value && barrioSelect.value !== '__other') return barrioSelect.value;
+    return barrioText.value.trim() || null;
+  }
+
   // ---------- Location (optional) ----------
 
   locationBtn.addEventListener('click', () => {
@@ -144,6 +180,7 @@
       lumaMeter: textValue('lumaMeter'),
       municipioId: Number(municipioSelect.value) || null,
       zipCode: textValue('zipCode'),
+      barrio: barrioValue(),
       equipmentCategory: radioValue('equipmentCategory'),
       survivalWindowHours: textValue('survivalWindowHours') === '' ? null : Number(textValue('survivalWindowHours')),
       backupPower: radioValue('backupPower'),

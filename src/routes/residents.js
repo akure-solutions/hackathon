@@ -105,6 +105,8 @@ function validateSignup(body) {
   const zipCode = cleanText(body.zipCode);
   if (!/^00[6-9]\d{2}$/.test(zipCode)) fail('zipCode', 'Escribe un código postal de Puerto Rico, por ejemplo 00685.');
 
+  const barrio = cleanText(body.barrio) || null;
+  if (barrio && barrio.length > 60) fail('barrio', 'El nombre del barrio es muy largo.');
   const survivalWindowHours = Number(body.survivalWindowHours);
   if (!(survivalWindowHours >= 0.5 && survivalWindowHours <= 168)) {
     fail('survivalWindowHours', 'Escribe cuántas horas dura tu equipo sin luz (entre 0.5 y 168).');
@@ -131,6 +133,7 @@ function validateSignup(body) {
     municipioId: municipio.id,
     municipioParticipating: municipio.participating === 1,
     zipCode,
+    barrio,
     equipmentCategory: oneOf(body.equipmentCategory, EQUIPMENT, 'equipmentCategory'),
     survivalWindowHours,
     backupPower: oneOf(body.backupPower, BACKUP, 'backupPower'),
@@ -157,10 +160,10 @@ function validateSignup(body) {
 
 const insertResident = db.prepare(`
   INSERT INTO residents (first_name, last_name_paternal, last_name_maternal, phone, address, gps,
-    luma_meter, notify_channel, municipio_id, zip_code, equipment_category, survival_window_hours,
+    luma_meter, notify_channel, municipio_id, zip_code, barrio, equipment_category, survival_window_hours,
     backup_power, lives_alone, mobility_limited, created_at)
   VALUES (@firstName, @lastNamePaternal, @lastNameMaternal, @phone, @address, @gps,
-    @lumaMeter, @notifyChannel, @municipioId, @zipCode, @equipmentCategory, @survivalWindowHours,
+    @lumaMeter, @notifyChannel, @municipioId, @zipCode, @barrio, @equipmentCategory, @survivalWindowHours,
     @backupPower, @livesAlone, @mobilityLimited, @createdAt)
 `);
 
@@ -187,6 +190,7 @@ const createResident = db.transaction((data) => {
     notifyChannel: data.notifyChannel,
     municipioId: data.municipioId,
     zipCode: data.zipCode,
+    barrio: data.barrio,
     equipmentCategory: data.equipmentCategory,
     survivalWindowHours: data.survivalWindowHours,
     backupPower: data.backupPower,

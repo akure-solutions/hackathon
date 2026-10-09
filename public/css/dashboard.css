@@ -465,6 +465,8 @@
 .map__pin:hover, .map__pin:focus-visible { transform: translate(-50%, -50%) scale(1.15); z-index: 4; }
 .legend__img { width: 16px; height: 16px; display: block; }
 
+.map__zone { width: 84px; height: 84px; opacity: 0.75; }
+
 /* ---------- Toast ---------- */
 
 .toast {

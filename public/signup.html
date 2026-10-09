@@ -156,6 +156,14 @@
           </div>
         </div>
 
+        <div class="field">
+          <label class="field__label" id="barrio-label" for="barrioText">Barrio <span class="field__optional">(opcional)</span></label>
+          <span class="field__hint" id="hint-barrio">Ayuda al equipo de emergencias a ubicarte más rápido.</span>
+          <select class="field__select" id="barrioSelect" aria-describedby="hint-barrio" hidden></select>
+          <input class="field__input" type="text" id="barrioText" maxlength="60" placeholder="Escribe tu barrio" aria-describedby="hint-barrio">
+          <p class="field__error" data-error-for="barrio"></p>
+        </div>
+
         <div class="notice notice--warn" id="municipio-not-participating" hidden>
           ▲ Este municipio aún no participa. LUMA y los contactos sí podrán recibir alertas.
         </div>
@@ -300,7 +308,7 @@
           <div class="consent__row">
             <div class="consent__text">
               <span class="consent__name">Oficina de Manejo de Emergencias del pueblo</span>
-              <span class="consent__desc">Ve el contacto, la ubicación y el tipo de equipo durante un apagón, y puede llamar para coordinar ayuda.</span>
+              <span class="consent__desc">Ve el contacto, la ubicación, el tipo de equipo y tu contacto de emergencia durante un apagón, y puede llamar para coordinar ayuda.</span>
             </div>
             <label class="toggle">
               <input type="checkbox" name="consents.municipio" aria-label="Autorizo compartir con la oficina de emergencias del pueblo">
@@ -309,7 +317,7 @@
           </div>
           <details class="consent__details">
             <summary>Ver detalles</summary>
-            <p>Autorizo a Energía Vital a compartir mi nombre, dirección física, información de contacto y datos limitados sobre mi dependencia de equipos médicos eléctricos con la Oficina Municipal de Manejo de Emergencias de mi pueblo, y autorizo a dicha oficina a comunicarse conmigo por teléfono, para facilitar la coordinación de asistencia durante apagones o emergencias.</p>
+            <p>Autorizo a Energía Vital a compartir mi nombre, dirección física, información de contacto, la información de mi contacto de emergencia y datos limitados sobre mi dependencia de equipos médicos eléctricos con la Oficina Municipal de Manejo de Emergencias de mi pueblo, y autorizo a dicha oficina a comunicarse conmigo por teléfono, para facilitar la coordinación de asistencia durante apagones o emergencias.</p>
             <p><strong>Entiendo que esta autorización no garantiza asistencia inmediata.</strong></p>
           </details>
         </div>

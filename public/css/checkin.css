@@ -72,3 +72,11 @@
 .emergency-note strong { color: var(--ev-coral-deep); }
 
 #checkin-error { margin-bottom: 24px; }
+
+.checkin__actions .btn { gap: 12px; }
+.btn__badge {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 36px; height: 36px; border-radius: 50%; background: var(--ev-white);
+}
+.btn__badge img { width: 24px; height: 24px; display: block; }
+.result__icon img { width: 28px; height: 28px; display: block; }

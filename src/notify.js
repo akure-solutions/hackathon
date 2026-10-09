@@ -1,7 +1,8 @@
 // Builds outbound messages (Spanish, brand voice) and delivers them.
 // NOTIFY_CHANNEL=log: nothing leaves the server. Messages are printed, kept in a small
 // in-memory buffer for the demo dashboard, and audited without content or PII.
-const { notifyChannel } = require('./config');
+const { notifyChannel, resendApiKey, demoNotifyEmail } = require('./config');
+
 const { audit } = require('./audit');
 const { nowSimIso } = require('./clock');
 
@@ -71,6 +72,43 @@ function buildMessage(step, ctx) {
   };
 }
 
+// ---------- Real email for the demo (Resend) ----------
+// Only the demo resident (Doña Carmen), only these steps, and only to DEMO_NOTIFY_EMAIL
+// (the developer's own inbox) leave the server. Everyone else stays simulated.
+const DEMO_RESIDENT_ID = 1;
+const EMAIL_SUBJECTS = {
+  notify_resident: 'Energía Vital: ¿Estás bien?',
+  alert_caregivers: 'Energía Vital: aviso para cuidadores',
+};
+
+function shouldEmail(step, ctx) {
+  return Boolean(resendApiKey && demoNotifyEmail)
+    && ctx.record.id === DEMO_RESIDENT_ID
+    && Boolean(EMAIL_SUBJECTS[step]);
+}
+
+async function sendDemoEmail(step, msg, residentId) {
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'Energía Vital <onboarding@resend.dev>',
+        to: [demoNotifyEmail],
+        subject: EMAIL_SUBJECTS[step],
+        text: `${msg.text}\n\n— Demostración de Energía Vital PR. Todos los datos son ficticios.`,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${await res.text()}`);
+    console.log(`[notify:${step}] ✉ correo real enviado (demo)`);
+    audit('NOTIFY_SENT', { residentId, details: { step, channel: 'email' } });
+  } catch (err) {
+    console.warn(`[notify:${step}] correo no enviado: ${err.message}`);
+    audit('NOTIFY_FAILED', { residentId, details: { step, channel: 'email' } });
+  }
+}
+
 function deliver(step, ctx) {
   const msg = buildMessage(step, ctx);
   const entry = { ...msg, step, residentId: ctx.record.id, simAt: nowSimIso() };
@@ -80,7 +118,11 @@ function deliver(step, ctx) {
     recentMessages.unshift(entry);
     if (recentMessages.length > MAX_BUFFER) recentMessages.pop();
   }
-  // Real providers (Twilio, WhatsApp Cloud API) plug in here once A2P registration is approved.
+  if (shouldEmail(step, ctx)) {
+    entry.realChannel = 'email';
+    sendDemoEmail(step, msg, ctx.record.id); // fire-and-forget: never blocks the engine tick
+  }
+  // SMS/WhatsApp providers plug in here once A2P carrier registration is approved.
 
   audit('NOTIFY_SIMULATED', {
     residentId: ctx.record.id,

@@ -34,6 +34,7 @@ app.use(readViewer);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/vendor/fontsource', express.static(path.join(__dirname, 'node_modules', '@fontsource')));
 
+app.get('/', (req, res) => res.redirect('/signup.html'));
 app.get('/health', (req, res) => {
   res.json({ ok: true, time: nowIso(), demoMode: config.demoMode });
 });

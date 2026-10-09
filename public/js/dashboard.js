@@ -516,7 +516,7 @@
       const q = state.session.municipioId ? `?municipioId=${state.session.municipioId}` : '';
       const d = await api('GET', `/api/luma/regions${q}`);
       pill.className = `source-pill ${d.status === 'live' ? 'is-live' : d.status === 'stale' ? 'is-stale' : ''}`;
-      $('luma-source-text').textContent = d.status === 'live' ? 'En vivo (no oficial)' : d.status === 'stale' ? 'Retrasado' : 'No disponible';
+      $('luma-source-text').textContent = d.status === 'live' ? 'En vivo' : d.status === 'stale' ? 'Retrasado' : 'No disponible';
       $('luma-updated').textContent = d.lumaTimestamp || '—';
       $('luma-customers').textContent = d.region ? `${d.region.withoutService.toLocaleString('en-US')} (${d.region.pct}%)` : '—';
       $('luma-region').textContent = d.region ? d.region.name : 'Región no disponible';

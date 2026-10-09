@@ -42,17 +42,17 @@
 
   const RESULTS = {
     ok: {
-      cls: 'result--ok', icon: '●',
+      cls: 'result--ok', icon: '/img/status/ok.svg',
       title: (s) => `Gracias, ${s.firstName}.`,
       body: () => 'Recibimos tu respuesta. Si algo cambia, vuelve a este enlace.',
     },
     help: {
-      cls: 'result--help', icon: '■',
+      cls: 'result--help', icon: '/img/status/help.svg',
       title: () => 'Ya avisamos.',
       body: () => 'Tus contactos y las oficinas que autorizaste recibieron tu pedido de ayuda.',
     },
     report: {
-      cls: 'result--report', icon: '▲',
+      cls: 'result--report', icon: '/img/status/awaiting.svg',
       title: () => 'Gracias por avisar.',
       body: () => 'Registramos el apagón en tu casa. ¿Cómo estás ahora?',
     },
@@ -67,7 +67,10 @@
     }
     const r = RESULTS[kind];
     box.className = `result ${r.cls}`;
-    el('result-icon').textContent = r.icon;
+    const img = document.createElement('img');
+    img.src = r.icon;
+    img.alt = '';
+    el('result-icon').replaceChildren(img);
     el('result-title').textContent = r.title(state);
     el('result-body').textContent = r.body(state);
     box.hidden = false;
