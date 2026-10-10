@@ -34,6 +34,24 @@ Energía Vital is a consent-based registry of residents in Puerto Rico who depen
 
 ---
 
+## Register a resident (try it yourself)
+
+Anyone can register a synthetic resident at **https://energiavitalpr.com** (it opens the sign-up page):
+
+1. Answer **"¿Tú o alguien en tu hogar usa equipo médico que necesita electricidad?"**
+2. **El equipo:** type of equipment, how many hours it runs without power, and backup power.
+3. **La persona:** name, phone (SMS or WhatsApp), address, town and **barrio** (San Sebastián shows a barrio list).
+4. **Contacto en caso de apagón:** one caregiver and their relationship.
+5. **¿Quién puede ver la información?** Turn each partner on or off:
+   - **Energía Vital** (required): to message you during an outage
+   - **Mis cuidadores:** they get an alert if you don't respond
+   - **LUMA:** sees your address, meter and that you depend on electric equipment, never the equipment type
+   - **Oficina de Manejo de Emergencias (OMME):** sees your contact, location, equipment type and emergency contact, and can call you. Only available in participating municipios.
+
+After you register, the page explains what will happen next. In demo mode it also gives you **your personal check-in link**. Register in **San Sebastián**, then press **Simular apagón** on the dashboard: your new resident appears on the map and in the case list, and **only the partners you authorized can see you**.
+
+> Please use made-up data. The live demo resets on every restart, so registrations are temporary.
+
 ## Try the demo (about 2 minutes)
 
 1. Open **https://energiavitalpr.com/dashboard.html**. You start as **R. Quiñones, OMME San Sebastián**.
@@ -218,8 +236,8 @@ The live demo runs on Render (free web service) with the custom domain `energiav
 ## Credits
 
 **Pre-existing assets**
-- Energía Vital brand kit (logo, color tokens, typography rules), created before the hackathon by the author. The `:root` design tokens in `public/css/base.css` come from it.
-- No code from other projects (including MedSeek) was reused. All application code was written during the hackathon.
+- Energía Vital brand kit (logo, color palette, typography rules), created before the hackathon. During the hackathon, its color and type values were copied into the `:root` design tokens in `public/css/base.css`.
+- **All code in this repository (100%) was written during the hackathon, October 8–10, 2026.** No code from other projects, including MedSeek, was reused.
 
 **Open-source libraries:** Express, better-sqlite3, helmet, express-rate-limit, cookie-parser, jsonwebtoken, dotenv.
 
@@ -227,7 +245,13 @@ The live demo runs on Render (free web service) with the custom domain `energiav
 
 **Services:** Render (hosting), Resend (demo email), LUMA's public regional outage endpoint (unofficial; Energía Vital is not affiliated with LUMA).
 
-**Tools:** built with AI assistance (Claude by Anthropic) for code review, debugging and documentation.
+**Tools:** built with AI assistance (Claude by Anthropic) for code review, debugging and documentation, GAMMA for PowerPoint, Recraft for Icon creation, and ChatGPT for image creation and pitch feedback.
+
+## About the builder
+
+Energía Vital was built by **Verushka**, founder of **Akure Solutions Corp** in Puerto Rico. I also build **[MedSeek](https://medseekpr.com)**, a healthcare platform that connects patients in Puerto Rico with providers, and **Código K**, a MedSeek feature that gives patients a health profile they own and control, shared by QR code and always free for patients ([demo view](https://medseekpr.com/codigo-k/fec68357956a0963dfff2c14df7a692bd53f367d9ebbe0005affb99f1bf823bb)).
+
+Energía Vital is a **separate project**. No MedSeek or Código K code was used, and the two systems do not share data. In the future, a resident could optionally link the two: MedSeek would store only a link ID and a consent timestamp, and no clinical information would ever flow into Energía Vital.
 
 ---
 
