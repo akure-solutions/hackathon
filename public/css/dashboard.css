@@ -49,8 +49,8 @@
 }
 .clock__btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); }
 .clock__btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.clock__btn--strong { border: none; background: var(--ev-teal-signal); color: var(--ev-navy); font-weight: 600; }
-.clock__btn--strong:hover:not(:disabled) { background: #3FE0CE; }
+.clock__btn.is-active { border-color: var(--ev-teal-signal); background: rgba(18, 205, 185, 0.16); color: var(--ev-teal-signal); }
+.clock__btn:active:not(:disabled) { transform: translateY(1px); }
 .clock__btn--scenario { border: 1.5px dashed var(--ev-teal-signal); color: var(--ev-teal-signal); font-weight: 600; }
 .clock__btn--scenario:hover:not(:disabled) { background: rgba(18, 205, 185, 0.12); }
 .clock__btn--simulate { border: none; background: var(--ev-coral); color: var(--ev-navy); font-weight: 600; }

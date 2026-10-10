@@ -220,7 +220,7 @@
 
   // ---------- Clock banner ----------
 
-  function renderClock() {
+    function renderClock() {
     const c = state.clock;
     if (!c) return;
     const drift = Date.now() - state.clockFetchedAt;
@@ -265,6 +265,7 @@
 
   document.querySelectorAll('[data-ff]').forEach((btn) => {
     btn.addEventListener('click', async () => {
+      document.querySelectorAll('[data-ff]').forEach((b) => b.classList.toggle('is-active', b === btn));
       try {
         await api('POST', '/api/demo/fast-forward', { minutes: Number(btn.dataset.ff) });
         await refresh();
@@ -286,12 +287,8 @@
   $('btn-reset').addEventListener('click', async () => {
     try {
       await api('POST', '/api/demo/reset');
-      state.prevStatus.clear();
-      state.flash.clear();
-      state.seenFeed = null;
-      closeDrawer();
       toast('Demostración reiniciada.');
-      await refresh();
+      setTimeout(() => window.location.reload(), 500); // full clean reload: clock, map, feed, filters
     } catch (err) { toast(err.message); }
   });
 
@@ -614,8 +611,15 @@
   // ---------- Refresh loop ----------
 
   async function refresh() {
-    if (state.inFlight || !state.session) return;
+    if (!state.session) return;
+    // If a refresh is already running, queue one more right after it.
+    // Safety: if a refresh has been "running" for more than 15 s, assume it got stuck and start fresh.
+    if (state.inFlight && Date.now() - (state.inFlightAt || 0) < 15000) {
+      state.refreshAgain = true;
+      return;
+    }
     state.inFlight = true;
+    state.inFlightAt = Date.now();
     const role = state.session.role;
     try {
       const clockQ = role !== 'luma' && state.session.municipioId ? `?municipioId=${state.session.municipioId}` : '';
@@ -631,11 +635,15 @@
       const jobs = [];
       if (role === 'municipio') {
         jobs.push(api('GET', '/api/dashboard/cases').then((d) => {
-          $('cases-hidden').textContent = d.hiddenCount
-            ? `🔒 Solo residentes que autorizaron compartir con OMME · ${d.hiddenCount} no autorizaron`
-            : '';
+          trackFlash(d.rows);
           state.rows = d.rows;
           renderCases(d.rows);
+          const hidden = $('cases-hidden');
+          if (hidden) {
+            hidden.textContent = d.hiddenCount
+              ? `🔒 ${d.hiddenCount} residente${d.hiddenCount === 1 ? '' : 's'} no autorizaron compartir contigo (no aparecen).`
+              : '';
+          }
         }));
       }
       if (role === 'luma') jobs.push(api('GET', '/api/dashboard/luma').then((d) => { state.rows = d.rows; renderLuma(d); }));
@@ -656,6 +664,10 @@
       else toast(err.message);
     } finally {
       state.inFlight = false;
+      if (state.refreshAgain) {
+        state.refreshAgain = false;
+        refresh();
+      }
     }
   }
 
