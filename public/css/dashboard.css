@@ -466,6 +466,7 @@
 .legend__img { width: 16px; height: 16px; display: block; }
 
 .map__zone { width: 84px; height: 84px; opacity: 0.75; }
+.map__pin.is-static { cursor: default; }
 
 /* ---------- Toast ---------- */
 

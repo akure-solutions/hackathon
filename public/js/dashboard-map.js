@@ -43,11 +43,8 @@
     if (!box) return;
     clear();
 
-    if (opts.town !== MAP_TOWN || opts.role === 'luma') {
-      const msg = opts.role === 'luma'
-        ? 'El mapa por barrio está disponible en la vista de Respuesta a Emergencias.'
-        : `Mapa esquemático disponible para ${MAP_TOWN}.`;
-      box.append(el('div', 'map__empty', msg));
+    if (opts.town !== MAP_TOWN) {
+      box.append(el('div', 'map__empty', `Mapa esquemático disponible para ${MAP_TOWN}.`));
       return;
     }
 

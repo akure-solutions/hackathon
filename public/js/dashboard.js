@@ -655,7 +655,7 @@
 
       if (window.EVMap) {
         window.EVMap.render({
-          role, rows: role === 'municipio' ? state.rows : [], analytics: state.analytics,
+          role, rows: (role === 'municipio' || role === 'luma') ? state.rows : [], analytics: state.analytics,
           outage: clock.outage, town: townName(), onOpen: openCase,
         });
       }
