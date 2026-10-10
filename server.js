@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const config = require('./src/config');
 const { nowIso } = require('./src/time');
+const tokens = require('./src/tokens');
 
 const residentsRouter = require('./src/routes/residents');
 const municipiosRouter = require('./src/routes/municipios');
@@ -35,6 +36,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/vendor/fontsource', express.static(path.join(__dirname, 'node_modules', '@fontsource')));
 
 app.get('/', (req, res) => res.redirect('/signup.html'));
+app.get('/demo/carmen', (req, res) => {
+  if (!config.demoMode) return res.status(404).send('No disponible.');
+  res.redirect(tokens.checkinUrl(tokens.issueToken(1)));
+});
 app.get('/health', (req, res) => {
   res.json({ ok: true, time: nowIso(), demoMode: config.demoMode });
 });
